@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: realtimemessage
+  name: realtime-deploy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: realtimemessage
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: realtimemessage
+    spec:
+      containers:
+      - image: amartya11/realtimemessage
+        name: realtimemessage
+        env:
+        - name: mongo
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: mongo
+        - name: my-secret
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: my-secret
+        - name: gin
+          valueFrom:
+            secretKeyRef:
+              name: secret
+              key: GIN_MODE
+        resources: {}
+status: {}
