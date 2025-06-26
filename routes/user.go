@@ -22,13 +22,14 @@ type CustomClaim struct {
 }
 
 func GetAllUsers(c *gin.Context) {
-	var users []models.User
-	users = views.GetUsers()
+	users := views.GetUsers()
 	c.JSON(200, gin.H{"users": users})
 }
 
 func CreateUser(c *gin.Context) { 
 	var user models.User
+	user.IsPremium = false
+	user.NonPremiumCount = 5
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),

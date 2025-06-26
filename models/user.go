@@ -11,6 +11,8 @@ type User struct {
 	Username string             `bson:"username"`
 	Email    string             `bson:"email"`
 	Password string             `bson:"password"`
+	IsPremium bool				`bson:"isPremium"`
+	NonPremiumCount int 		`bson:"nonPremiumCount"`
 	CreatedAt time.Time          `bson:"createdAt"`
 	UpdatedAt time.Time          `bson:"updatedAt"`
 }

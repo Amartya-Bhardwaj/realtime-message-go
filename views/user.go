@@ -55,3 +55,30 @@ func GetIdByEmail (email string) string{
 
 	return string(user.ID.Hex())
 }
+
+func GetUserByEmail (email string) models.User{
+	ctx := context.Background()
+	var user models.User
+	collection := db.DB.Database("test").Collection("users")
+	err := collection.FindOne(ctx, bson.M{"email": email}).Decode(&user)
+	if err != nil {
+		log.Println("Error occured: ", err)
+	}
+
+	return user
+}
+
+func UpdateNonPremiumCount(count int, email string) {
+	ctx := context.Background()
+	collection := db.DB.Database("test").Collection("users")
+	update := bson.M{
+		"$set": bson.M{
+			"nonPremiumCount": count,
+		},
+	}
+	res,err := collection.UpdateOne(ctx, bson.M{"email": email}, update)
+	if err != nil {
+		log.Println("Error occured: ", err)
+	}
+	log.Println("Successfully updated the count", res.ModifiedCount)
+}

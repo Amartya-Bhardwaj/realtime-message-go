@@ -19,7 +19,7 @@ func main() {
 	config.AllowOrigins = []string{"*"}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 	r.Use(cors.New(config))
-	gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.DebugMode)
 	db.ConnectDatabase()
 	err := db.DB.Ping(ctx,  nil)
 	if err != nil {
@@ -33,5 +33,7 @@ func main() {
 	r.POST("/createUser", routes.CreateUser)
 	r.POST("/loginUser", routes.LoginUser)
 	r.POST("/conversation", routes.ConversationInUsers)
+	r.POST("/payment/order", routes.CreateOrder)
+	r.POST("/order/events", routes.OrderWebhookEvent)
 	r.Run()
 }

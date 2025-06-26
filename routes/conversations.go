@@ -38,24 +38,53 @@ func ConversationInUsers(c *gin.Context) {
 		c.JSON(403, "Invalid Token")
 		return
 	}
-
-	sender_id := convertStringtoHex(views.GetIdByEmail(conversationJSON.SenderEmail))
+	//Check If the User is Premium or not
+	email := string(conversationJSON.SenderEmail)
+	var user = views.GetUserByEmail(email)
+	if !user.IsPremium {
+		if user.NonPremiumCount > 0 {
+			changedCount := user.NonPremiumCount - 1
+			views.UpdateNonPremiumCount(changedCount, email)
+			sender_id := convertStringtoHex(views.GetIdByEmail(conversationJSON.SenderEmail))
 	
-	receiver_id := convertStringtoHex(views.GetIdByEmail(conversationJSON.ReceiverEmail))
+			receiver_id := convertStringtoHex(views.GetIdByEmail(conversationJSON.ReceiverEmail))
 
-	conversation := models.Conversation {
-		Participants: []primitive.ObjectID{receiver_id},
-		LastMessage: models.Message{
-			Sender: sender_id,
-			Text: conversationJSON.Message,
-			Timestamp: time.Now(),
-		},
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+			conversation := models.Conversation {
+				Participants: []primitive.ObjectID{receiver_id},
+				LastMessage: models.Message{
+					Sender: sender_id,
+					Text: conversationJSON.Message,
+					Timestamp: time.Now(),
+				},
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
+			}
+
+			views.ConversationInUsers(conversation)
+			c.JSON(http.StatusOK, conversation)
+		} else {
+			response := map[string] interface{} {"desc": "Not a premium user"}
+			c.JSON(http.StatusNotAcceptable, response)
+		}
+	} else {
+		sender_id := convertStringtoHex(views.GetIdByEmail(conversationJSON.SenderEmail))
+	
+		receiver_id := convertStringtoHex(views.GetIdByEmail(conversationJSON.ReceiverEmail))
+
+		conversation := models.Conversation {
+			Participants: []primitive.ObjectID{receiver_id},
+			LastMessage: models.Message{
+				Sender: sender_id,
+				Text: conversationJSON.Message,
+				Timestamp: time.Now(),
+			},
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		}
+
+		views.ConversationInUsers(conversation)
+		c.JSON(http.StatusOK, conversation)
 	}
-
-	views.ConversationInUsers(conversation)
-	c.JSON(http.StatusOK, conversation)
 }
 
 func convertStringtoHex(input string) primitive.ObjectID{
