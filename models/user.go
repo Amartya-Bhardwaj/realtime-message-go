@@ -17,7 +17,7 @@ type User struct {
 	UpdatedAt time.Time          `bson:"updatedAt"`
 }
 
-// Conversation represents a chat conversation  
+// Conversation represents a chat conversation
 type Conversation struct {
 	ID           primitive.ObjectID `bson:"_id,omitempty"`
 	Participants []primitive.ObjectID `bson:"participants"`
