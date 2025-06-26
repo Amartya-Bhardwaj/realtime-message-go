@@ -15,3 +15,4 @@
     Setup the environment variable for mongo URI and the JWT secret.
     For execution of the service -> go run main.go 
     
+# realtime-message-go
